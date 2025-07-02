@@ -3,233 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HoloTools - YouTube Downloader</title>
+    <title>HoloTools Pro - YouTube Downloader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f0f2f5;
-            color: #333;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .container {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .tab-container {
+            font-family: 'Inter', sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 0;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+
+        .header {
+            width: 100%;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid #7c3aed;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            margin-top: -30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 720px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
         }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #eee;
-            border: none;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
-        }
-        .tab.active {
-            background-color: #6e8efb;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
+
         input[type="text"] {
-            width: 70%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+            flex: 1;
+            padding: 15px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
         }
+
         button {
-            padding: 12px 20px;
-            background-color: #6e8efb;
-            color: white;
+            background: #4f46e5;
             border: none;
-            border-radius: 5px;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1em;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            transition: background 0.3s ease;
         }
+
         button:hover {
-            background-color: #5a7de0;
+            background: #4338ca;
         }
-        #result {
-            margin-top: 20px;
+
+        .formats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .format-item {
+            background: #f9fafb;
             padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            min-height: 100px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        #status {
-            color: #666;
+
+        .status {
             font-style: italic;
-            margin: 10px 0;
-        }
-        .warning {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
+            color: #6b7280;
             margin-bottom: 20px;
-            border-radius: 0 5px 5px 0;
-        }
-        .format-option {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .format-option:hover {
-            background-color: #e9ecef;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>HoloTools</h1>
-        <p>YouTube Video & MP3 Downloader</p>
+        <h1>HoloTools Pro</h1>
+        <p>Download YouTube videos in HD & MP3 effortlessly</p>
     </div>
 
-    <div class="container">
-        <div class="warning">
-            <strong>Disclaimer:</strong> This tool is for personal use only. Downloading copyrighted content may violate YouTube's Terms of Service.
+    <div class="card">
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="Paste YouTube video URL here">
+            <button onclick="fetchInfo()">Fetch</button>
         </div>
-
-        <div class="tab-container">
-            <button class="tab active" onclick="openTab('video')">Video Download</button>
-            <button class="tab" onclick="openTab('audio')">MP3 Download</button>
-        </div>
-
-        <div id="video" class="tab-content active">
-            <h2>Download YouTube Video</h2>
-            <input type="text" id="videoUrl" placeholder="Enter YouTube URL">
-            <button onclick="fetchVideoInfo()">Get Formats</button>
-            <div id="videoStatus">Ready</div>
-            <div id="videoFormats"></div>
-            <div id="videoResult"></div>
-        </div>
-
-        <div id="audio" class="tab-content">
-            <h2>Convert to MP3</h2>
-            <input type="text" id="audioUrl" placeholder="Enter YouTube URL">
-            <button onclick="convertToMP3()">Convert</button>
-            <div id="audioStatus">Ready</div>
-            <div id="audioResult"></div>
-        </div>
+        <div class="status" id="statusText">Awaiting input...</div>
+        <div class="formats" id="formatsContainer"></div>
     </div>
 
     <script>
-        // Tab switching
-        function openTab(tabName) {
-            const tabs = document.getElementsByClassName('tab-content');
-            for (let tab of tabs) {
-                tab.classList.remove('active');
+        async function fetchInfo() {
+            const url = document.getElementById('urlInput').value;
+            const status = document.getElementById('statusText');
+            const formats = document.getElementById('formatsContainer');
+
+            if (!url.trim()) {
+                status.textContent = 'Please enter a valid YouTube URL.';
+                return;
             }
-            document.getElementById(tabName).classList.add('active');
 
-            const tabButtons = document.getElementsByClassName('tab');
-            for (let button of tabButtons) {
-                button.classList.remove('active');
+            status.textContent = 'Fetching info...';
+            formats.innerHTML = '';
+
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                status.textContent = 'Invalid YouTube URL.';
+                return;
             }
-            event.currentTarget.classList.add('active');
-        }
-
-        // Video download functions
-        async function fetchVideoInfo() {
-            const url = document.getElementById('videoUrl').value;
-            if (!url) return;
-
-            document.getElementById('videoStatus').textContent = 'Fetching video info...';
-            document.getElementById('videoFormats').innerHTML = '';
-            document.getElementById('videoResult').innerHTML = '';
 
             try {
-                // Extract video ID
-                const videoId = extractVideoId(url);
-                if (!videoId) throw new Error('Invalid YouTube URL');
+                const res = await fetch(`https://pipedapi.kavin.rocks/streams/${videoId}`);
+                if (!res.ok) throw new Error('API request failed');
 
-                // Use Piped API as a proxy
-                const response = await fetch(`https://pipedapi.kavin.rocks/streams/${videoId}`);
-                if (!response.ok) throw new Error('Failed to fetch video info');
+                const data = await res.json();
+                status.textContent = `Available formats for: ${data.title}`;
 
-                const data = await response.json();
-
-                // Display available formats
-                displayFormats(data);
-                document.getElementById('videoStatus').textContent = 'Select a format below:';
-            } catch (error) {
-                document.getElementById('videoStatus').textContent = 'Error: ' + error.message;
+                const allStreams = [...(data.videoStreams || []), ...(data.audioStreams || [])];
+                allStreams.forEach(stream => {
+                    const div = document.createElement('div');
+                    div.className = 'format-item';
+                    div.innerHTML = `
+                        <span><strong>${stream.quality || 'Audio'}</strong> - ${stream.format}</span>
+                        <button onclick="download('${stream.url}', '${data.title}.${stream.format.split(';')[0]}')">Download</button>
+                    `;
+                    formats.appendChild(div);
+                });
+            } catch (e) {
+                status.textContent = 'Failed to fetch video information.';
+                console.error(e);
             }
         }
 
         function extractVideoId(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
+            const match = url.match(/(?:v=|youtu\.be\/|\/embed\/)([\w-]{11})/);
+            return match ? match[1] : null;
         }
 
-        function displayFormats(data) {
-            const formatsContainer = document.getElementById('videoFormats');
-            formatsContainer.innerHTML = '';
-
-            // Video formats
-            if (data.videoStreams && data.videoStreams.length > 0) {
-                const videoGroup = document.createElement('div');
-                videoGroup.innerHTML = '<h3>Video Formats</h3>';
-                formatsContainer.appendChild(videoGroup);
-
-                data.videoStreams.forEach(stream => {
-                    const formatOption = document.createElement('div');
-                    formatOption.className = 'format-option';
-                    formatOption.innerHTML = `
-                        <strong>${stream.quality}</strong> - ${stream.format} 
-                        <button onclick="downloadFormat('${stream.url}', '${data.title}.${stream.format.split(';')[0]}')">
-                            Download
-                        </button>
-                    `;
-                    formatsContainer.appendChild(formatOption);
-                });
-            }
-
-            // Audio formats
-            if (data.audioStreams && data.audioStreams.length > 0) {
-                const audioGroup = document.createElement('div');
-                audioGroup.innerHTML = '<h3>Audio Formats</h3>';
-                formatsContainer.appendChild(audioGroup);
-
-                data.audioStreams.forEach(stream => {
-                    const formatOption = document.createElement('div');
-                    formatOption.className = 'format-option';
-                    formatOption.innerHTML = `
-                        <strong>${stream.quality}</strong> - ${stream.format} 
-                        <button onclick="downloadFormat('${stream.url}', '${data.title}.${stream.format.split(';')[0]}')">
-                            Download
-                        </button>
-                    `;
-                    formatsContainer.appendChild(formatOption);
-                });
-            }
-        }
-
-        function downloadFormat(url, filename) {
+        function download(url, filename) {
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
@@ -237,85 +165,6 @@
             a.click();
             document.body.removeChild(a);
         }
-
-        // MP3 conversion functions
-        async function convertToMP3() {
-            const url = document.getElementById('audioUrl').value;
-            if (!url) return;
-
-            document.getElementById('audioStatus').textContent = 'Starting conversion...';
-            document.getElementById('audioResult').innerHTML = '';
-
-            try {
-                const videoId = extractVideoId(url);
-                if (!videoId) throw new Error('Invalid YouTube URL');
-
-                // First download the audio
-                document.getElementById('audioStatus').textContent = 'Downloading audio...';
-                
-                // Use yt-dlp REST API (client-side proxy)
-                const proxyUrl = `https://ytdl.anotherrandomwebsite.com/api/info?url=https://youtube.com/watch?v=${videoId}`;
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Failed to fetch audio');
-
-                const data = await response.json();
-                const audioUrl = data.formats.find(f => f.audio_only).url;
-
-                // Convert to MP3 using client-side FFmpeg
-                document.getElementById('audioStatus').textContent = 'Converting to MP3...';
-                const mp3Blob = await convertToMP3Blob(audioUrl, data.title);
-
-                // Create download link
-                const mp3Url = URL.createObjectURL(mp3Blob);
-                const a = document.createElement('a');
-                a.href = mp3Url;
-                a.download = `${data.title}.mp3`;
-                a.innerHTML = 'Download MP3';
-                document.getElementById('audioResult').appendChild(a);
-                
-                document.getElementById('audioStatus').textContent = 'Conversion complete!';
-            } catch (error) {
-                document.getElementById('audioStatus').textContent = 'Error: ' + error.message;
-            }
-        }
-
-        async function convertToMP3Blob(audioUrl, title) {
-            // Load FFmpeg client-side
-            const { createFFmpeg, fetchFile } = FFmpeg;
-            const ffmpeg = createFFmpeg({ log: true });
-            await ffmpeg.load();
-
-            // Fetch audio
-            const response = await fetch(audioUrl);
-            const audioData = await response.arrayBuffer();
-            
-            // Write file to FFmpeg
-            ffmpeg.FS('writeFile', 'input.webm', await fetchFile(new Blob([audioData])));
-            
-            // Run FFmpeg command
-            await ffmpeg.run('-i', 'input.webm', '-q:a', '0', '-map', 'a', 'output.mp3');
-            
-            // Read result
-            const data = ffmpeg.FS('readFile', 'output.mp3');
-            return new Blob([data.buffer], { type: 'audio/mp3' });
-        }
-
-        // Load FFmpeg when needed
-        let ffmpegLoaded = false;
-        async function loadFFmpeg() {
-            if (!ffmpegLoaded) {
-                const script = document.createElement('script');
-                script.src = "https://unpkg.com/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js";
-                document.head.appendChild(script);
-                ffmpegLoaded = true;
-                return new Promise(resolve => {
-                    script.onload = resolve;
-                });
-            }
-        }
-
-        // Load FFmpeg when MP3 tab is clicked
-        document.querySelector('.tab[onclick="openTab(\'audio\')"]').addEventListener('click', loadFFmpeg);
     </script>
 </body>
 </html>
