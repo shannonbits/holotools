@@ -130,7 +130,7 @@
             }
 
             try {
-                const res = await fetch(`https://pipedapi.kavin.rocks/streams/${videoId}`);
+                const res = await fetch(`https://pipedapi.adminforge.de/streams/${videoId}`);
                 if (!res.ok) throw new Error('API request failed');
 
                 const data = await res.json();
