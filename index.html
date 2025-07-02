@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YT-DLP WASM Web Interface</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ddd; min-height: 100px; }
+        #status { color: #666; font-style: italic; }
+        .warning { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>YouTube Downloader (Client-Side)</h1>
+    <p class="warning">Use at your own risk. May stop working without notice.</p>
+    
+    <input type="text" id="url" placeholder="Enter YouTube URL" style="width: 70%; padding: 8px;">
+    <button onclick="downloadVideo()">Download</button>
+    
+    <div id="status">Ready</div>
+    <div id="result"></div>
+
+    <!-- Load yt-dlp WASM -->
+    <script src="https://cdn.jsdelivr.net/npm/yt-dlp-wasm@latest/dist/yt-dlp.wasm.js"></script>
+    <script>
+        async function downloadVideo() {
+            const url = document.getElementById('url').value;
+            if (!url) return;
+            
+            document.getElementById('status').textContent = 'Initializing...';
+            document.getElementById('result').innerHTML = '';
+            
+            try {
+                // Initialize yt-dlp WASM
+                const ytdlp = await YTDLP();
+                
+                document.getElementById('status').textContent = 'Fetching video info...';
+                
+                // Get video info (this happens in your browser)
+                const info = await ytdlp.exec(['--dump-json', url]);
+                
+                document.getElementById('status').textContent = 'Processing...';
+                
+                // Create download link
+                const videoId = info.id;
+                const title = info.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const downloadUrl = `https://yt.artemislena.eu/api/v1/download?id=${videoId}&title=${title}`;
+                
+                document.getElementById('result').innerHTML = `
+                    <a href="${downloadUrl}" download="${title}.mp4">
+                        Download: ${info.title}
+                    </a>
+                    <br><br>
+                    <small>Duration: ${info.duration} seconds</small>
+                `;
+                
+                document.getElementById('status').textContent = 'Ready';
+            } catch (e) {
+                document.getElementById('status').textContent = 'Error occurred';
+                document.getElementById('result').textContent = e.message;
+            }
+        }
+    </script>
+    
+    <div style="margin-top: 40px; font-size: 0.8em; color: #666;">
+        <p><strong>Disclaimer:</strong> This uses experimental technology and may violate YouTube's ToS. For personal use only.</p>
+        <p>All processing happens in your browser - no server involved.</p>
+    </div>
+</body>
+</html>
